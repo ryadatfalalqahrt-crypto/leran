@@ -1,0 +1,178 @@
+index<html>
+،،<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تعلم الهيروغليفية للأطفال</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#ffe08a;
+    background-image:url("https://www.transparenttextures.com/patterns/papyrus.png");
+}
+
+.container{
+    max-width:950px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    border:3px solid #caa24a;
+    text-align:center;
+}
+
+h2{
+    color:#7a4b00;
+}
+
+.card{
+    display:inline-block;
+    margin:10px;
+    padding:10px;
+    background:#fff8e1;
+    border-radius:12px;
+    width:120px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:scale(1.1);
+}
+
+.card img{
+    width:60px;
+}
+
+button{
+    padding:8px;
+    border:none;
+    border-radius:8px;
+    background:#f6d365;
+    cursor:pointer;
+    margin:5px;
+}
+
+#msg{
+    font-size:30px;
+    min-height:50px;
+}
+
+.win{color:green;}
+.lose{color:red;}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🏺 تعلم الهيروغليفية</h2>
+<p>أهلاً بيك 👋 يلا نتعلم الحروف!</p>
+
+<div id="letters"></div>
+
+<hr>
+
+<h2>🎮 لعبة: اختار الرمز الصحيح</h2>
+<div id="quiz"></div>
+
+<p id="msg"></p>
+
+<hr>
+
+<h2>✍️ اكتب اسمك بالهيروغليفية</h2>
+<input type="text" id="nameInput">
+<button onclick="convertName()">تحويل</button>
+<p id="output"></p>
+
+</div>
+
+<script>
+
+/* الحروف */
+const letters = [
+{ar:"أ", img:"https://cdn-icons-png.flaticon.com/512/616/616494.png", name:"نسر"},
+{ar:"ب", img:"https://cdn-icons-png.flaticon.com/512/1046/1046876.png", name:"بيت"},
+{ar:"م", img:"https://cdn-icons-png.flaticon.com/512/616/616430.png", name:"بومة"}
+];
+
+let html = "";
+letters.forEach(l=>{
+    html += `
+    <div class="card" onclick="speak('${l.ar}')">
+        <h3>${l.ar}</h3>
+        <img src="${l.img}">
+        <p>${l.name}</p>
+    </div>`;
+});
+document.getElementById("letters").innerHTML = html;
+
+/* صوت */
+function speak(letter){
+    let msg = new SpeechSynthesisUtterance(letter);
+    msg.lang = "ar-EG";
+    speechSynthesis.speak(msg);
+}
+
+/* لعبة */
+let current = 0;
+const quiz = [
+{q:"ما هو رمز حرف ب؟", options:["🏠","🦅"], answer:0},
+{q:"ما هو رمز حرف م؟", options:["🦉","🏠"], answer:0},
+{q:"ما هو رمز حرف أ؟", options:["🦅","🦉"], answer:0}
+];
+
+function loadQuiz(){
+    let q = quiz[current];
+    let html = `<p>${q.q}</p>`;
+    q.options.forEach((opt,i)=>{
+        html += `<button onclick="check(${i})">${opt}</button>`;
+    });
+    document.getElementById("quiz").innerHTML = html;
+}
+
+function check(i){
+    let msg = document.getElementById("msg");
+    if(i === quiz[current].answer){
+        msg.innerHTML = "👏 برافو!";
+        msg.className="win";
+    }else{
+        msg.innerHTML = "😢 حاول تاني";
+        msg.className="lose";
+    }
+
+    current++;
+    if(current < quiz.length){
+        setTimeout(loadQuiz,1000);
+    }else{
+        document.getElementById("quiz").innerHTML="🎉 خلصت اللعبة!";
+    }
+}
+
+loadQuiz();
+
+/* تحويل الاسم */
+function convertName(){
+    let name = document.getElementById("nameInput").value;
+    let result = "";
+
+    for(let i=0;i<name.length;i++){
+        if(name[i]=="أ") result+="🦅 ";
+        else if(name[i]=="ب") result+="🏠 ";
+        else if(name[i]=="م") result+="🦉 ";
+        else result+=name[i]+" ";
+    }
+
+    document.getElementById("output").innerHTML=result;
+}
+
+</script>
+
+</body>
+</html>
